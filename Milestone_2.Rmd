@@ -1,0 +1,75 @@
+---
+title: "Milestone 2"
+author: "Daniel Smith"
+date: "3/27/2019"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+#load needed packages
+library(tidyverse)
+library(twitteR)
+```
+## Project Changes 
+
+### Change of Project Direction and Justification
+
+Originally, this project was meant to serve as an explanation of the twitter conversation occuring around the global epidemic of chronic kidney disease of unknown etiology (CKDu). In order to determine the feasibility of analyzing tweets related to this topic, an initial search on Twitter showed that there were people ad organizations tweeting about the epidemic and these tweets served as the basis for identifying keywords and hashtags to use for the colleciton of tweets. From the beggining, there was worry about having access to a sufficient number of these tweets to proivde a robust analysis. Given the fewer number of twitter users tweeting about CKDu and the inherent limitations of Twitter's API (i.e. only allowing free access to tweets in the last 7 days), the focus of this project has shifted to analyzing tweets related to climate change and health.
+
+### Change in Project Question 3.  
+
+Due to the general lack of geocoding of tweets, question 3 "Where are people from who are tweeting about the CKDu epidemic?" has been dropped. Instead, an analysis of the word network in the collected tweets will be done using the libraries `igraph` and `ggraph`. 
+
+## Background 
+
+## Data Acquisition
+
+Data for this project was acquired from http://twitter.com and were acquired through Daniel Smith's API account, which has been connected to R below. All tweets were acquired on March 4, 2019.  
+
+```{r link to twitter, include=TRUE}
+#Connect R to twitter.com with API information 
+#First, API information is entered into R as vectors. 
+api_key <- "sbUlW5AkRQtN9j9qj9BuW13tn"
+api_secret <- "Oql2n57GRzfDmvUWYdOy9BJxq5kwPdK77KC0EKIxMOpOUO61gl"
+access_token <- "906672440-UZYZCHBALNuo5Qt0Fg15bWH3AMq6WxJnaxqkT0rp"
+access_token_secret <- "UfYImM6LN1PeXuJtPN6RIlK8Zz9mRQa1pHsDAf9bOuUbw"
+#Second, connect R to twitter
+setup_twitter_oauth(api_key, api_secret, access_token, access_token_secret)
+```
+
+A mixture of key words/phraces and hashtags were used to query tweets about the CKDu epidemic. Keywords used in this search were "chronic kidney disease of unknown etiology", "enfermedad renal crónica no tradicional", "mesoamerican nephropathy", and "chronic interstitial nephritis in agricultural communities". Hashtags used in this search were #CKDu #CINAC #MeN and #ERCnt. 
+
+```{r search for tweets, include=TRUE}
+#Search for tweets that contain the phrace "chronic kidney disease of unknown etilogy"
+CKDu_keyword <- c(searchTwitter("chronic kidney disease of unknown etiology", n=5000))
+ERCnt_keyword <- c(searchTwitter("enfermedad renal crónica no tradicional", n=5000))
+MeN_keyword <- c(searchTwitter("mesoamerican nephropathy", n=5000))
+CINAC_keyword <- c(searchTwitter("chronic interstitial nephritis in agricultural communities", n=5000))
+Climate_Change <- c(searchTwitter("climate change+health", n=5000))
+#Search for tweets that contain the hashtags of interest for this project. 
+CKDu_hashtag <- c(searchTwitter("#CKDu", n=5000))
+ERCnt_hashtag <- c(searchTwitter("#ERCnt", n=5000))
+CINAC_hashtag <- c(searchTwitter("#CINAC", n=5000))
+MeN_hashtag <- c(searchTwitter("#MeN", n=5000))
+#make tweets a data frame. 
+CKDu_keyword.df <- twListToDF(CKDu_keyword)
+Climate_Change.df <-twListToDF(Climate_Change)
+#print data frame
+CKDu_keyword.df
+Climate_Change.df
+#save tweets as CSV
+write.csv(CKDu_keyword.df, 'CKDu_keyword.csv')
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
