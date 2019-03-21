@@ -1,0 +1,56 @@
+@article{laws2016,
+   author = {Laws, Rebecca L. and Brooks, Daniel R. and Amador, Juan José and Weiner, Daniel E. and Kaufman, James S. and Ramírez-Rubio, Oriana and Riefkohl, Alejandro and Scammell, Madeleine K. and López-Pilarte, Damaris and Sánchez, José Marcel and Parikh, Chirag R. and McClean, Michael D.},
+   title = {Biomarkers of Kidney Injury Among Nicaraguan Sugarcane Workers},
+   journal = {American Journal of Kidney Diseases},
+   volume = {67},
+   number = {2},
+   pages = {209-217},
+   ISSN = {02726386},
+   DOI = {10.1053/j.ajkd.2015.08.022},
+   year = {2016},
+   type = {Journal Article}
+}
+
+@article{mix2018,
+   author = {Mix, J. and Elon, L. and Mac, V. and Flocks, J. and Economos, E. and Tovar-Aguilar, A. J. and Hertzberg, V. S. and McCauley, L. A.},
+   title = {Hydration Status, Kidney Function, and Kidney Injury in Florida Agricultural Workers},
+   journal = {Journal of Occupational and Environmental Medicine},
+   volume = {60},
+   number = {5},
+   pages = {e253-e260},
+   ISSN = {1536-5948 (Electronic)
+1076-2752 (Linking)},
+   DOI = {10.1097/JOM.0000000000001261},
+   url = {https://www.ncbi.nlm.nih.gov/pubmed/29271837},
+   year = {2018},
+   type = {Journal Article}
+}
+
+@article{moyce2016,
+   author = {Moyce, S. and Joseph, J. and Tancredi, D. and Mitchell, D. and Schenker, M.},
+   title = {Cumulative Incidence of Acute Kidney Injury in California's Agricultural Workers},
+   journal = {J Occup Environ Med},
+   volume = {58},
+   number = {4},
+   pages = {391-7},
+   ISSN = {1536-5948 (Electronic)
+1076-2752 (Linking)},
+   DOI = {10.1097/JOM.0000000000000668},
+   url = {https://www.ncbi.nlm.nih.gov/pubmed/27058480},
+   year = {2016},
+   type = {Journal Article}
+}
+
+@article{valdes2015,
+   author = {Valdés, Raúl Herrera and Orantes, Carlos M. and López, Miguel Almaguer and Marín, Laura López and Arévalo, Pedro Alfonso and González, Magaly J. Smith and Morales, Fabrizio E. and Bacallao, Raymed and Bayarre, Héctor D. and Parada, Xavier F. Vela},
+   title = {Clinical characteristics of chronic kidney disease of non-traditional causes in women of agricultural communities in El Salvador},
+   journal = {Clinical Nephrology},
+   volume = {83 (2015)},
+   number = {S1},
+   pages = {56-63},
+   ISSN = {0301-0430},
+   DOI = {10.5414/cnp83s056},
+   year = {2015},
+   type = {Journal Article}
+}
+

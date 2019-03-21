@@ -3,8 +3,10 @@ title: "Milestone_2.0"
 author: "Daniel Smith"
 date: "3/27/2019"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
+bibliography: bibliography.bib
+csl: apa.csl
 ---
 
 ```{r setup, include=TRUE}
@@ -12,22 +14,29 @@ knitr::opts_chunk$set(echo = TRUE)
 #load needed packages
 library(tidyverse)
 library(twitteR)
+library(tidytext)
 ```
 ## Project Changes 
 
 ### Change of Project Direction and Justification
 
-Originally, this project was meant to serve as an explanation of the twitter conversation occuring around the global epidemic of chronic kidney disease of unknown etiology (CKDu). In order to determine the feasibility of analyzing tweets related to this topic, an initial search on Twitter showed that there were people ad organizations tweeting about the epidemic and these tweets served as the basis for identifying keywords and hashtags to use for the colleciton of tweets. From the beggining, there was worry about having access to a sufficient number of these tweets to proivde a robust analysis. Given the fewer number of twitter users tweeting about CKDu and the inherent limitations of Twitter's API (i.e. only allowing free access to tweets in the last 7 days), the focus of this project has shifted to analyzing tweets related to climate change and health.
+Originally, this project was meant to serve as an explanation of the twitter conversation occuring around the global epidemic of chronic kidney disease of unknown etiology (CKDu). In order to determine the feasibility of analyzing tweets related to this topic, an initial search on Twitter showed that there were people ad organizations tweeting about the epidemic and these tweets served as the basis for identifying keywords and hashtags to use for the colleciton of tweets. From the beggining, there was worry about having access to a sufficient number of these tweets to proivde a robust analysis. Given the fewer number of twitter users tweeting about CKDu and the inherent limitations of Twitter's API (i.e. only allowing free access to tweets in the last 7 days), the focus of this project has shifted to analyzing tweets related to climate change and health in order to ensure access to an adequate volumes of tweets for analysis. 
 
 ### Change in Project Question 3.  
 
-Due to the general lack of geocoding of tweets, question 3 "Where are people from who are tweeting about the CKDu epidemic?" has been dropped. Instead, an analysis of the word network in the collected tweets will be done using the libraries `igraph` and `ggraph`. 
+Due to the general lack of geocoding of tweets, question 3 ofr the proposal "Where are people from who are tweeting about the CKDu epidemic?" has been dropped. Instead, an analysis of the word network in the collected tweets will be done using the packages `igraph` and `ggraph`. 
 
-## Background 
+## Introduction
 
-## Data Acquisition
+Climate change is a topic of dicussion in a plethora of disciplines and as environmental health researchers and nurses, we often see first hand the effects that climate change has on individuals' lives and health.The pathways in which climate change impact human health are complex and some examples include ocean acidification leading to undernuritrion due to reduced fishery and aquacultural production, increased temepratures leading to increases in vector-borne disease and increases in heat-related illness, and increases in air pollution causing more cadriovascular and respiratory disease [@Watts2017; @Orru2017; @Heaviside2016]. However, as a term, 'climate change' encompasses the multiple ways in which the Earth's climate is changing. Climate change can involve increasing instances of extremem events (i.e. hurricanes and polar vorteces), increasing average global temperatures, decreasing ice caps, increasing sea levels, increasing levels or carbon dioxide in the atmosphere, increasing droughts, and changes in the amount of percipitation a region of the Earth receives [@Shaftel2019]. Given the many different parts that make up climate change, it is evident that multiple different conversations are happening within the climate change sphere. 
 
-Data for this project was acquired from http://twitter.com and were acquired through Daniel Smith's API account, which has been connected to R below. All tweets were acquired on March 4, 2019.  
+Global warming is one piece of climate change that is particularly worrisome to the health of different populations around the globe. Heat waves from global warming will impact people with chronic disease. For example, people with hypertension, heart disase, diabetes, or asthma are at a greater risk for suffering complicaitons related to their disease due to excess temperatures [@Rossati2017]. One study in Korea found that heat waves were associated with a 14% increase in out-of-hosiptal-cardiac arrest [@Kang2016]. However, the effects of increased heat are not just limited to the general population. Outdoor occupational groups, such as construction workers, miners, and agricultural workers, are particularly vulnerable to the impacts of increasing termperatures [@Levi2018; @Hunt2014; @Fleischer2013]. As global temperatures continue to increase, heat-related illness is expected to become more common in outdoor workers. Studies have shown that heat-strain and dehydration cause agricultural workers to experience acute kidney injury during shifts [@Mix2018; @Moyce2017; @Moyce2016]. Annually,farmworkers also experience heat-related deaths 20x the rate of the US civilian-workforce [@Jackson2010].
+
+In order to better understand the nature of the conversations surrounding climate change and health on social media, this study will utilize Twitter (a social media site that allows users to tweet messages of 240 characters or less) to characterize and analyze the differences between tweets at various levels of the climate change conversation. Twitter has proved useful in many health related studies through content analysis, surveillance, recruitment, intervention, and network analysis [@Sinnenberg2017]. This analysis will focus on content analysis of tweets through sentiment analysis (a metrif for evaluating the opinions expresed within text as either positive or negative) and word networks within tweets. A comparison of word frequencies between the three groups will also be conducted. Keywords for identifying tweets from each group to be included in the analysis are 'climate change + health', 'global warming + health', and 'heat illness + health'. 
+ 
+## Methods
+
+Data for this project was acquired from http://twitter.com and were acquired through Daniel Smith's API account, which has been connected to R below. All tweets were acquired on March 20, 2019, using the functions of the `twitteR` package. 
 
 ```{r link to twitter, include=TRUE}
 #Connect R to twitter.com with API information 
@@ -40,24 +49,181 @@ access_token_secret <- "UfYImM6LN1PeXuJtPN6RIlK8Zz9mRQa1pHsDAf9bOuUbw"
 setup_twitter_oauth(api_key, api_secret, access_token, access_token_secret)
 ```
 
-A mixture of key words/phraces and hashtags were used to query tweets about the CKDu epidemic. Keywords used in this search were "chronic kidney disease of unknown etiology", "enfermedad renal crónica no tradicional", "mesoamerican nephropathy", and "chronic interstitial nephritis in agricultural communities". Hashtags used in this search were #CKDu #CINAC #MeN and #ERCnt. 
+Key words/phrases were used to query tweets about climate change and health across multiple levels of the climate change spectrum. Starting with the idea of 'climate change', the keywords used to query tweets were 'climate change + health'. Using the idea of 'global warming', keywords used in the query were 'global warming + health'. Finally, to query tweets about heat illness, the keywords utilized in the search were 'heat illness + health'. Using n=5000, the max number of tweets without being rate limited by the API were requested for each of the search terms. Tweets were also limited to the English Language. 
 
-```{r tweets, include=TRUE}
-#Search for tweets that contain the phrace "chronic kidney disease of unknown etilogy"
-CKDu_keyword <- c(searchTwitter("chronic kidney disease of unknown etiology", n=5))
-ERCnt_keyword <- c(searchTwitter("enfermedad renal crónica no tradicional", n=5))
-MeN_keyword <- c(searchTwitter("mesoamerican nephropathy", n=5))
-CINAC_keyword <- c(searchTwitter("chronic interstitial nephritis in agricultural communities", n=5))
-Climate_Change <- c(searchTwitter("climate change+health", n=5))
-#Search for tweets that contain the hashtags of interest for this project. 
-CKDu_hashtag <- c(searchTwitter("#CKDu", n=5))
-ERCnt_hashtag <- c(searchTwitter("#ERCnt", n=5))
-CINAC_hashtag <- c(searchTwitter("#CINAC", n=5))
-MeN_hashtag <- c(searchTwitter("#MeN", n=5))
-#make tweets a data frame. 
-Climate_Change.df <-twListToDF(Climate_Change)
-#print data frame
-Climate_Change.df
+```{r tweets, include=TRUE, eval=FALSE}
+#This code chunk was only ran once on March 20, 2019, to prevent R from pulling new tweets each time the documented was knitted into an output file.
+
+#Search for tweets that contain the phrase 'climate change' only. 
+climatechange <- c(searchTwitter("climate change", n=10000, lang = "en"))
+#Make data frame of ALL tweets. 
+climatechange.df <- twListToDF(climatechange)
+#Strip retweets and make data frame of "pure" tweets.  
+climatechange_noRT.df <-twListToDF(strip_retweets(climatechange))
+#Make R wait before running the next set of tweets so that being 'rate limited' is avoided 
+Sys.sleep(600)
+
+#Search for tweets that contain the phrase 'global warming' only. 
+globalwarming <- c(searchTwitter("global warming", n=10000, lang = "en"))
+#Make data frame of ALL tweets. 
+globalwarming.df <-twListToDF(globalwarming)
+#Strip retweets and make data frame of "pure" tweets.  
+globalwarming_noRT.df <-twListToDF(strip_retweets(globalwarming))
+#Make R wait before running the next set of tweets so that being 'rate limited' is avoided 
+Sys.sleep(600)
+
+#Search for tweets that contain the phrase 'heat illness' only. 
+heatillness <- c(searchTwitter("heat illness", n=10000, lang = "en"))
+#Make data frame of ALL tweets
+heatillness.df <-twListToDF(heatillness)
+#Strip retweets and make data frame of "pure" tweets.  
+heatillness_noRT.df <-twListToDF(strip_retweets(heatillness))
+#Make R wait before running the next set of tweets so that being 'rate limited' is avoided 
+Sys.sleep(600)
+
+#Search for tweets that contain the phrases described above + health. 
+
+#Search for 'climate change+health'. 
+climatechange_health<- c(searchTwitter("climate change+health", n=10000, lang = "en"))
+#Make data frame of ALL tweets 
+climatechange_health.df <-twListToDF(climatechange_health)
+#Strip retweets and make data frame of "pure" tweets.  
+climatechange_health_noRT.df <-twListToDF(strip_retweets(climatechange_health))
+#Make R wait before running the next set of tweets so that being 'rate limited' is avoided 
+Sys.sleep(600)
+
+#Search for 'global warming+health'.
+globalwarming_health <- c(searchTwitter("global warming+health", n=10000, lang = "en"))
+#Make a data frame form ALL tweets 
+globalwarming_health.df <-twListToDF(globalwarming_health)
+#Strip retweets and make data frame of "pure" tweets.  
+globalwarming_health_noRT.df <-twListToDF(strip_retweets(globalwarming_health))
+#Make R wait before running the next set of tweets so that being 'rate limited' is avoided 
+Sys.sleep(600)
+
+#Search for 'heat illness+health'. 
+heatillness_health <- c(searchTwitter("heat illness+health", n=10000, lang = "en"))
+#Make a data frame from ALL tweets
+heatillness_health.df <-twListToDF(heatillness_health)
+#Strip retweets and make data frame of "pure" tweets.  
+heatillness_health_noRT.df <-twListToDF(strip_retweets(heatillness_health))
+
+
+```
+Before analysis of tweets can occur, @Yang2018 suggests that tweets should be converted to all lower case, have links, punctuation and stopwords removed. Stop words are words such as 'a' and 'to' that are not meaningful in the textual analysis. In order to clean the tweets, the package `tidytext` was used to clean tweets. 
+```{r cleaning, include=TRUE, eval=FALSE}
+#open data sets needed
+#Cleaning the climate change & health tweets
+# remove http elements from heatillness & health tweets
+climatechange_health_noRT.df$stripped_text <- gsub("http.*","",  climatechange_health_noRT.df$text)
+climatechange_health_noRT.df$stripped_text <- gsub("https.*","",  climatechange_health_noRT.df$text)
+#Convert to lowercase, remove punctutation, and add unique ID for each occurance of a word in the tweets using `tidytext`. 
+climatechange_health_noRT_prelimclean.df <- climatechange_health_noRT.df %>%
+  dplyr::select(stripped_text) %>%
+  unnest_tokens(word, stripped_text)
+#Remove stop words from the tweets
+#First load the list of stop words form the tidytext package. 
+data("stop_words")
+#view the first 6 stop words
+head(stop_words)
+#view number of unique words in tweets with stopwords 
+nrow(climatechange_health_noRT_prelimclean.df)
+#Remove stopwords from tweets
+climatechange_health_noRT_clean.df <- climatechange_health_noRT_prelimclean.df %>%
+  anti_join(stop_words)
+#view number of unique words in tweets without stopwords
+nrow(climatechange_health_noRT_clean.df)
+
+#Cleaning the global wamring & health tweets
+# remove http elements from heatillness & health tweets
+globalwarming_health_noRT.df$stripped_text <- gsub("http.*","",  globalwarming_health_noRT.df$text)
+globalwarming_health_noRT.df$stripped_text <- gsub("https.*","",  globalwarming_health_noRT.df$text)
+#Convert to lowercase, remove punctutation, and add unique ID for each occurance of a word in the tweets using `tidytext`. 
+globalwarming_health_noRT_prelimclean.df <- globalwarming_health_noRT.df %>%
+  dplyr::select(stripped_text) %>%
+  unnest_tokens(word, stripped_text)
+#Remove stop words from the tweets
+#First load the list of stop words form the tidytext package. 
+data("stop_words")
+#view the first 6 stop words
+head(stop_words)
+#view number of unique words in tweets with stopwords 
+nrow(globalwarming_health_noRT_prelimclean.df)
+#Remove stopwords from tweets
+globalwarming_health_noRT_clean.df <- globalwarming_health_noRT_prelimclean.df %>%
+  anti_join(stop_words)
+#view number of unique words in tweets without stopwords
+nrow(globalwarming_health_noRT_clean.df)
+
+#Cleaning the heatillness & health tweets
+# remove http elements from heatillness & health tweets
+heatillness_health_noRT.df$stripped_text <- gsub("http.*","",  heatillness_health_noRT.df$text)
+heatillness_health_noRT.df$stripped_text <- gsub("https.*","", heatillness_health_noRT.df$stripped_text)
+#Convert to lowercase, remove punctutation, and add unique ID for each occurance of a word in the tweets using `tidytext`. 
+heatillness_health_noRT_prelimclean.df <- heatillness_health_noRT.df %>%
+  dplyr::select(stripped_text) %>%
+  unnest_tokens(word, stripped_text)
+#Remove stop words from the tweets
+#First load the list of stop words form the tidytext package. 
+data("stop_words")
+#view the first 6 stop words
+head(stop_words)
+#view number of unique words in tweets with stopwords 
+nrow(heatillness_health_noRT_prelimclean.df)
+#Remove stopwords from tweets
+heatillness_health_noRT_clean.df <- heatillness_health_noRT_prelimclean.df %>%
+  anti_join(stop_words)
+#view number of unique words in tweets without stopwords
+nrow(heatillness_health_noRT_clean.df)
 ```
 
+# Results
+```{r frequency}
+#plot the top 15 words from climatechange+health tweets
+climatechange_health_noRT_clean.df %>%
+  count(word, sort = TRUE) %>%
+  top_n(15) %>%
+  mutate(word = reorder(word, n)) %>%
+  ggplot(aes(x = word, y = n)) +
+  geom_col() +
+  xlab(NULL) +
+  coord_flip() +
+      labs(y = "Count",
+      x = "Unique words",
+      title = "Count of unique words found in climate change & health tweets",
+      subtitle = "Stop words removed from the list")
 
+#plot the top 15 words from globalwarming+health tweets
+globalwarming_health_noRT_clean.df %>%
+  count(word, sort = TRUE) %>%
+  top_n(15) %>%
+  mutate(word = reorder(word, n)) %>%
+  ggplot(aes(x = word, y = n)) +
+  geom_col() +
+  xlab(NULL) +
+  coord_flip() +
+      labs(y = "Count",
+      x = "Unique words",
+      title = "Count of unique words found in global warming & health tweets",
+      subtitle = "Stop words removed from the list")
+
+#plot the top 15 words from heatillness+health tweets
+heatillness_health_noRT_clean.df %>%
+  count(word, sort = TRUE) %>%
+  top_n(13) %>% #made 13, because lots of words were showing that only appeared 1 time. Due to small number of tweets. 
+  mutate(word = reorder(word, n)) %>%
+  ggplot(aes(x = word, y = n)) +
+  geom_col() +
+  xlab(NULL) +
+  coord_flip() +
+      labs(y = "Count",
+      x = "Unique words",
+      title = "Count of unique words found in heatillness & health tweets",
+      subtitle = "Stop words removed from the list")
+```
+
+# Discussion 
+
+# Conclusion
+
+# Bibliography
